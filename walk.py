@@ -12,7 +12,7 @@ class Service(object):
     pass
 
   def receve(self, socket, data):
-    socket.send(data)
+    socket.send('10:%s' % data)
 
 if __name__ == '__main__':
   WebSocketServer(Service()).run(7002)

@@ -24,8 +24,7 @@ try {
   var s = new WebSocket(host);
   // 接続開始処理
   s.onopen = function (e) {
-    //
-    cscreen.write(20, 'connect');
+    cscreen.write(20, 'connected');
   };
   // 切断処理
   s.onclose = function (e) {
@@ -33,18 +32,25 @@ try {
   };
   // メッセージ受信処理
   s.onmessage = function (e) {
-    cscreen.write(0, e.data);
+    var match, line, message;
+    match = e.data.match(/^(\d+):(.*)/);
+    line = match[1];
+    message = match[2];
+    cscreen.write(line, message);
   };
   // 接続エラー処理
   s.onerror = function (e) {
     cscreen.write(20, 'error');
   };
+  // 入力処理
+  document.onkeydown = function (e) {
+    message = 'code: ' + e.keyCode;
+    if (e.shiftKey) message += ' + shift';
+    s.send('<font color="olive">'  + message + '</font>');
+  };
 } catch (ex) {
-    cscreen.write(20, 'exception');
+  // 例外処理
+  cscreen.write(20, 'exception');
 }
 
-document.onkeydown = function (e) {
-  message = 'code: ' + e.keyCode;
-  if (e.shiftKey) message += ' + shift';
-  s.send('<font color="olive">'  + message + '</font>');
-};
+
