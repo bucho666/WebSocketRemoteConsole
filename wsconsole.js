@@ -44,9 +44,7 @@ try {
   };
   // 入力処理
   document.onkeydown = function (e) {
-    message = 'code: ' + e.keyCode;
-    if (e.shiftKey) message += ' + shift';
-    s.send('<font color="olive">'  + message + '</font>');
+    s.send(e.keyCode)
   };
 } catch (ex) {
   // 例外処理
