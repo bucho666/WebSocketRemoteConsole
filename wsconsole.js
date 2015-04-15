@@ -24,11 +24,11 @@ try {
   var s = new WebSocket(host);
   // 接続開始処理
   s.onopen = function (e) {
-    cscreen.write(20, 'connected');
+    cscreen.write(20, '<font color="green">connected</font>');
   };
   // 切断処理
   s.onclose = function (e) {
-    cscreen.write(20, 'disconnect');
+    cscreen.write(20, '<font color="red">disconnect</font>');
   };
   // メッセージ受信処理
   s.onmessage = function (e) {
@@ -43,8 +43,8 @@ try {
     cscreen.write(20, 'error');
   };
   // 入力処理
-  document.onkeydown = function (e) {
-    s.send(e.keyCode)
+  document.onkeypress= function (e) {
+    s.send(e.charCode)
   };
 } catch (ex) {
   // 例外処理
