@@ -18,8 +18,6 @@ class ScreenBuffer(object):
         self._updated.add(y)
 
   def flush(self, socket):
-    #for y in self._updated:
-    #  socket.send('%d:%s' % (y, "".join(self._grid[y])))
     data = ['%d:%s' % (y, "".join(self._grid[y])) for y in self._updated]
     data.append('flip')
     socket.send('\x00'.join(data))
@@ -30,13 +28,17 @@ class ScreenBuffer(object):
     self._grid[y][x] = g
     self._updated.add(y)
 
+  def write(self, string, (x, y)):
+    for i, ch in enumerate(string):
+      self.put(ch, (x+i, y));
+
 class Service(object):
   def __init__(self):
     self._x, self._y = (0, 0)
     self._screen = ScreenBuffer((80, 21))
 
   def enter(self, socket):
-    pass
+    self._screen = ScreenBuffer((80, 21))
 
   def leave(self, socket):
     pass
@@ -49,8 +51,8 @@ class Service(object):
     if key == 'j': self._y += 1
     if key == 'k': self._y -= 1
     self._screen.put('@', (self._x, self._y))
+    self._screen.write('%s' % key, (0, 15))
     self._screen.flush(socket)
-    socket.send('15:%s' % key)
 
 if __name__ == '__main__':
   WebSocketServer(Service()).run(7002)
