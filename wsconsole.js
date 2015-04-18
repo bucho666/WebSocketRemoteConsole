@@ -43,15 +43,21 @@ try {
   };
   // メッセージ受信処理
   s.onmessage = function (e) {
-    var match, line, message;
-    if (e.data == 'flip') {
-        cscreen.flip();
-        return;
+    var match, line, message, i, length, data;
+    commands = e.data.split('\x00');
+    length = commands.length;
+    console.log(commands);
+    for (i=0;i < length; i++) {
+      data = commands[i];
+      if (data == 'flip') {
+          cscreen.flip();
+          return;
+      }
+      match = data.match(/^(\d+):(.*)/);
+      line = match[1];
+      message = match[2];
+      cscreen.write(line, message);
     }
-    match = e.data.match(/^(\d+):(.*)/);
-    line = match[1];
-    message = match[2];
-    cscreen.write(line, message);
   };
   // 接続エラー処理
   s.onerror = function (e) {

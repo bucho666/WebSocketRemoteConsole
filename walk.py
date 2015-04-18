@@ -18,9 +18,11 @@ class ScreenBuffer(object):
         self._updated.add(y)
 
   def flush(self, socket):
-    for y in self._updated:
-      socket.send('%d:%s' % (y, "".join(self._grid[y])))
-    socket.send('flip')
+    #for y in self._updated:
+    #  socket.send('%d:%s' % (y, "".join(self._grid[y])))
+    data = ['%d:%s' % (y, "".join(self._grid[y])) for y in self._updated]
+    data.append('flip')
+    socket.send('\x00'.join(data))
     self._updated.clear()
 
   def put(self, g, (x, y)):
