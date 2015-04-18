@@ -6,7 +6,7 @@ class ScreenBuffer(object):
     self._size = size
     (w, h) = self._size
     self._grid = [[None for x in range(w)] for y in range(h)]
-    self._updated = []
+    self._updated = set()
     self.fill('&nbsp')
 
   def fill(self, g):
@@ -15,17 +15,18 @@ class ScreenBuffer(object):
       for x in range(w):
         if self._grid[y][x] == g: continue
         self._grid[y][x] = g
-        self._updated.append(y)
+        self._updated.add(y)
 
   def flush(self, socket):
     for y in self._updated:
       socket.send('%d:%s' % (y, "".join(self._grid[y])))
-    self._updated = []
+    socket.send('flip')
+    self._updated.clear()
 
   def put(self, g, (x, y)):
     if self._grid[y][x] == g: return
     self._grid[y][x] = g
-    self._updated.append(y)
+    self._updated.add(y)
 
 class Service(object):
   def __init__(self):

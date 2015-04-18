@@ -1,16 +1,27 @@
 // console screen class
+var backBuffer;
 function ConsoleScreen(height) {
   (function () {
+    var screen = document.createElement('div');
+    screen.id = 'screen'
+    document.body.appendChild(screen);
     for (var i = 0; i < height; i++) {
-      var div = document.createElement('div');
-      div.innerHTML = '<br>';
-      document.body.appendChild(div);
+      var line = document.createElement('div');
+      line.innerHTML = '<br>';
+      screen.appendChild(line);
     }
+    backBuffer = screen.cloneNode(true);
   })();
 
   this.write = function(line, message) {
-    lines = document.body.getElementsByTagName('div')
-    lines[line].innerHTML = message
+    lines = backBuffer.getElementsByTagName('div');
+    lines[line].innerHTML = message;
+  };
+
+  this.flip = function() {
+    var front = document.getElementById('screen');
+    document.body.replaceChild(backBuffer, front);
+    backBuffer = backBuffer.cloneNode(true);
   };
 }
 
@@ -33,6 +44,10 @@ try {
   // メッセージ受信処理
   s.onmessage = function (e) {
     var match, line, message;
+    if (e.data == 'flip') {
+        cscreen.flip();
+        return;
+    }
     match = e.data.match(/^(\d+):(.*)/);
     line = match[1];
     message = match[2];
